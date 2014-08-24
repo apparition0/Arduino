@@ -1,21 +1,18 @@
-#include <TinyGPS.h>
 #include <SD.h>
 #include <SoftwareSerial.h>
 
 //GPS variables
 static const int RXPin = 3, TXPin = 4;
 static const uint32_t GPSBaud = 4800;
-TinyGPS gps;
 SoftwareSerial ss(RXPin, TXPin);  // The serial connection to the GPS device, jumpers (reversed)
 // SD Card variables
 const int chipSelect = 10;
 File dataFile;
 // My variables
-boolean usesdcard = true;
-int sstate = 0;
+boolean usesdcard = false;
 char message[100];
 int  messageindex=0;
-int seconds;
+int loops;
 void setup()
 {
   Serial.begin(9600);  // talk to PC
@@ -40,7 +37,7 @@ void setup()
   for(messageindex=0;messageindex<100;messageindex++)
     message[messageindex] = '\0';
   messageindex=0;
-  seconds = 0;
+  loops = 0;
   Serial.println("setup() complete");
 }
 
@@ -75,7 +72,7 @@ void loop()
       message[messageindex-1] = '\0'; // remove newline?
       Serial.print(message);  // print WHOLE message to console
       Serial.println("]");
-      seconds=0;
+      loops++;;
       
       for(messageindex=0;messageindex<100;messageindex++)
         message[messageindex] = '\0';
