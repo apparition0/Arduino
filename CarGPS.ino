@@ -10,6 +10,7 @@ const int chipSelect = 10;
 File dataFile;
 // My variables
 boolean usesdcard = false;
+boolean printeachchar = true;
 char message[100];
 int  messageindex=0;
 int loops;
@@ -50,7 +51,7 @@ void loop()
   {
     i = ss.read();
     c = (char)i;
-    if(false)// print NEMA strings
+    if(printeachchar)// print NEMA strings
       Serial.print( c );
       
     if(messageindex>100) messageindex = 0; // don't walk off the end of memory!
@@ -78,8 +79,7 @@ void loop()
         message[messageindex] = '\0';
       messageindex=0;
     } // if i==10 // 
-    
+    Serial.println("end while");
   } // while ss avail
-
 }
 
