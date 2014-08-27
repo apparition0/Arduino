@@ -68,11 +68,11 @@ void loop()
     if(i==10)  // enter on newline
     {
       if((strncmp(message,"$GPRMC,",6)==0)||strncmp(message,"$GPVTG,",6)==0)
-        if( (currentMillis = millis()) - previousMillis > interval) 
+        //if( (currentMillis = millis()) - previousMillis > interval) 
         {
-          Serial.print("########################### ");
-          Serial.println(currentMillis / 1000);
-          previousMillis = currentMillis; 
+          //Serial.print("########################### ");
+          //Serial.println(currentMillis / 1000);
+          //previousMillis = currentMillis; 
           if(usesdcard)
           {
             if(!dataFile)
