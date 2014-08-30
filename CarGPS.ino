@@ -16,6 +16,13 @@ int  messageindex=0;
 unsigned long currentMillis;
 unsigned long previousMillis;
 unsigned long interval;
+// pin 5 and 6 are PWM
+int BluePin = 5; 
+int RedPin = 6; 
+int GreenPin = 7; 
+int RedPinStatus = 0;
+int BluePinStatus = 0;
+int GreenPinStatus = 0;
 void setup()
 {
   Serial.begin(9600);  // talk to PC
@@ -42,7 +49,7 @@ void setup()
     {
       Serial.println("card initialized.");
       if(!dataFile)
-              dataFile = SD.open("pswlog.txt", FILE_WRITE);
+              dataFile = SD.open("pswlogB.txt", FILE_WRITE);
       
       dataFile.print("$GPPSW,POWERUP,");
       dataFile.println(millis());
@@ -55,9 +62,16 @@ void setup()
     message[messageindex] = '\0';
   messageindex=0;
   
-  interval = 1000 * 5 * 60; // five minutes
+  interval = 300000; // five minutes
   previousMillis = millis();
-  Serial.println("setup() complete");
+  
+  pinMode(RedPin, OUTPUT); RedPinStatus = 0;
+  pinMode(GreenPin, OUTPUT); GreenPinStatus = 0;
+  pinMode(BluePin, OUTPUT); BluePinStatus = 0;
+  
+  
+  Serial.print("setup() complete, interval=");
+  Serial.println(interval);
 }
 
 void loop()
@@ -79,36 +93,46 @@ void loop()
       if(millis() > (previousMillis+interval))
         {
           previousMillis = millis();
-          dataFile = SD.open("pswlog.txt", FILE_WRITE);
-            dataFile.println(millis());
-            dataFile.flush();
-            dataFile.close();
+          dataFile = SD.open("pswlogB.txt", FILE_WRITE);
+          dataFile.println(millis());
+          dataFile.flush();
+          dataFile.close();
         }
     if(i==10)  // enter on newline
     {
-      if((strncmp(message,"$GPRMC,",6)==0)||strncmp(message,"$GPVTG,",6)==0)
-        //if( (currentMillis = millis()) - previousMillis > interval) 
-        {
-          //Serial.print("########################### ");
-          //Serial.println(currentMillis / 1000);
-          //previousMillis = currentMillis; 
-          if(usesdcard)
-          {
-            //if(!dataFile)
-              dataFile = SD.open("pswlog.txt", FILE_WRITE);
-            dataFile.print(message);
-            dataFile.flush();
-            dataFile.close();
-          }  //if usesdcard
-        }    
-      Serial.print("[");
+      digitalWrite(GreenPin,HIGH);
+      if(usesdcard && (strncmp(message,"$GPVTG,",6) ) )
+      {
+          if(!dataFile)
+            dataFile = SD.open("pswlogvtg.txt", FILE_WRITE);
+          dataFile.print(message);
+          dataFile.flush();
+          dataFile.close();
+        if( BluePinStatus-- == 0) BluePinStatus = 255;
+        analogWrite(BluePin,BluePinStatus);
+      }    
+      if(usesdcard && (strncmp(message,"$GPRMC,",6)==0) )
+      {
+          if(!dataFile)
+            dataFile = SD.open("pswlogrmc.txt", FILE_WRITE);
+          dataFile.print(message);
+          dataFile.flush();
+          dataFile.close();
+        if( RedPinStatus++ == 255) RedPinStatus = 0;
+        analogWrite(RedPin,RedPinStatus);
+      }    
+      Serial.println(BluePinStatus);
+      Serial.println(RedPinStatus);
+      
+      Serial.print(" [");
       message[messageindex-1] = '\0'; // remove newline?
       Serial.print(message);  // print WHOLE message to console
-      Serial.println("]");
+      Serial.println("] ");
       
       for(messageindex=0;messageindex<100;messageindex++)
         message[messageindex] = '\0';
       messageindex=0;
+      digitalWrite(GreenPin,LOW);
     } // if i==10 // 
   } // while ss avail
 }
