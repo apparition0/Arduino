@@ -39,14 +39,24 @@ void setup()
     if (!SD.begin(chipSelect)) 
       Serial.println("Card failed, or not present");
     else
+    {
       Serial.println("card initialized.");
+      if(!dataFile)
+              dataFile = SD.open("pswlog.txt", FILE_WRITE);
+      
+      dataFile.print("$GPPSW,POWERUP,");
+      dataFile.println(millis());
+      dataFile.flush();
+      dataFile.close();
+    }
   }
   
   for(messageindex=0;messageindex<100;messageindex++)
     message[messageindex] = '\0';
   messageindex=0;
   
-  interval = 1000 * 10; // ten seconds
+  interval = 1000 * 5 * 60; // five minutes
+  previousMillis = millis();
   Serial.println("setup() complete");
 }
 
@@ -65,6 +75,15 @@ void loop()
     if(messageindex>100) messageindex = 0; // don't walk off the end of memory!
     message[messageindex++] = c;
     
+    if(usesdcard)
+      if(millis() > (previousMillis+interval))
+        {
+          previousMillis = millis();
+          dataFile = SD.open("pswlog.txt", FILE_WRITE);
+            dataFile.println(millis());
+            dataFile.flush();
+            dataFile.close();
+        }
     if(i==10)  // enter on newline
     {
       if((strncmp(message,"$GPRMC,",6)==0)||strncmp(message,"$GPVTG,",6)==0)
@@ -75,7 +94,7 @@ void loop()
           //previousMillis = currentMillis; 
           if(usesdcard)
           {
-            if(!dataFile)
+            //if(!dataFile)
               dataFile = SD.open("pswlog.txt", FILE_WRITE);
             dataFile.print(message);
             dataFile.flush();
