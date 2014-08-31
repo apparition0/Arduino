@@ -100,39 +100,54 @@ void loop()
         }
     if(i==10)  // enter on newline
     {
-      digitalWrite(GreenPin,HIGH);
-      if(usesdcard && (strncmp(message,"$GPVTG,",6) ) )
+      //digitalWrite(GreenPin,HIGH);
+      Serial.println(String(message));
+      Serial.println(String(message).indexOf(",,,,,,"));
+      Serial.println();
+      if(usesdcard && (strncmp(message,"$GPVTG,",6)==0 ) )
       {
-          if(!dataFile)
-            dataFile = SD.open("pswlogvtg.txt", FILE_WRITE);
+        //digitalWrite(BluePin,HIGH);
+        if(String(message).indexOf(",,,,,,")== -1)
+          analogWrite(BluePin,100);
+        else
+          analogWrite(RedPin,100);
+          //if(!dataFile)
+            dataFile = SD.open("pswlogv.txt", FILE_WRITE);
           dataFile.print(message);
           dataFile.flush();
           dataFile.close();
-        if( BluePinStatus-- == 0) BluePinStatus = 255;
-        analogWrite(BluePin,BluePinStatus);
+        //if( BluePinStatus-- == 0) BluePinStatus = 255;
+        //analogWrite(BluePin,BluePinStatus);
+        digitalWrite(BluePin,LOW);
       }    
       if(usesdcard && (strncmp(message,"$GPRMC,",6)==0) )
       {
-          if(!dataFile)
-            dataFile = SD.open("pswlogrmc.txt", FILE_WRITE);
+        if(String(message).indexOf(",,,,,,")== -1)
+          digitalWrite(GreenPin,HIGH);
+        else
+          analogWrite(RedPin,100);
+          //if(!dataFile)
+            dataFile = SD.open("pswlogr.txt", FILE_WRITE);
           dataFile.print(message);
           dataFile.flush();
           dataFile.close();
-        if( RedPinStatus++ == 255) RedPinStatus = 0;
-        analogWrite(RedPin,RedPinStatus);
+        //if( RedPinStatus++ == 255) RedPinStatus = 0;
+        //analogWrite(RedPin,RedPinStatus);
+        digitalWrite(GreenPin,LOW);
       }    
-      Serial.println(BluePinStatus);
-      Serial.println(RedPinStatus);
+      digitalWrite(RedPin,LOW);
+      //Serial.println(BluePinStatus);
+      //Serial.println(RedPinStatus);
       
-      Serial.print(" [");
-      message[messageindex-1] = '\0'; // remove newline?
-      Serial.print(message);  // print WHOLE message to console
-      Serial.println("] ");
+      //Serial.print(" [");
+      //message[messageindex-1] = '\0'; // remove newline?
+      //Serial.print(message);  // print WHOLE message to console
+      //Serial.println("] ");
       
       for(messageindex=0;messageindex<100;messageindex++)
         message[messageindex] = '\0';
       messageindex=0;
-      digitalWrite(GreenPin,LOW);
+      //digitalWrite(GreenPin,LOW);
     } // if i==10 // 
   } // while ss avail
 }
