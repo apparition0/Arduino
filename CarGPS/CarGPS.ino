@@ -40,11 +40,22 @@ void setup()
   //Serial.println("$PUBX,40,RMC,0,0,0,0*47");
   Serial.println("$PUBX,40,GSV,0,0,0,0*59");
   //Serial.println("$PUBX,40,VTG,0,0,0,0*5E");  
+
+  interval = 300000; // five minutes
+  previousMillis = millis();
+  
+  pinMode(RedPin, OUTPUT); RedPinStatus = 0;
+  pinMode(GreenPin, OUTPUT); GreenPinStatus = 0;
+  pinMode(BluePin, OUTPUT); BluePinStatus = 0;
+  
   if(usesdcard)
   {
     pinMode(10, OUTPUT);
     if (!SD.begin(chipSelect)) 
+    {
       Serial.println("Card failed, or not present");
+      usesdcard = false;
+    }
     else
     {
       Serial.println("card initialized.");
@@ -61,15 +72,7 @@ void setup()
   for(messageindex=0;messageindex<100;messageindex++)
     message[messageindex] = '\0';
   messageindex=0;
-  
-  interval = 300000; // five minutes
-  previousMillis = millis();
-  
-  pinMode(RedPin, OUTPUT); RedPinStatus = 0;
-  pinMode(GreenPin, OUTPUT); GreenPinStatus = 0;
-  pinMode(BluePin, OUTPUT); BluePinStatus = 0;
-  
-  
+    
   Serial.print("setup() complete, interval=");
   Serial.println(interval);
 }
@@ -101,10 +104,10 @@ void loop()
     if(i==10)  // enter on newline
     {
       //digitalWrite(GreenPin,HIGH);
-      Serial.println(String(message));
-      Serial.println(String(message).indexOf(",,,,,,"));
-      Serial.println();
-      if(usesdcard && (strncmp(message,"$GPVTG,",6)==0 ) )
+      Serial.print(String(message));
+      //Serial.println(String(message).indexOf(",,,,,,"));
+      //Serial.println();
+      if(strncmp(message,"$GPVTG,",6)==0 ) 
       {
         //digitalWrite(BluePin,HIGH);
         if(String(message).indexOf(",,,,,,")== -1)
@@ -112,25 +115,35 @@ void loop()
         else
           analogWrite(RedPin,100);
           //if(!dataFile)
+          if(usesdcard)
+          {
             dataFile = SD.open("pswlogv.txt", FILE_WRITE);
-          dataFile.print(message);
-          dataFile.flush();
-          dataFile.close();
+            dataFile.print(message);
+            dataFile.flush();
+            dataFile.close();
+          }
+          else
+            analogWrite(RedPin,50);
         //if( BluePinStatus-- == 0) BluePinStatus = 255;
         //analogWrite(BluePin,BluePinStatus);
         digitalWrite(BluePin,LOW);
       }    
-      if(usesdcard && (strncmp(message,"$GPRMC,",6)==0) )
+      if(strncmp(message,"$GPRMC,",6)==0) 
       {
         if(String(message).indexOf(",,,,,,")== -1)
           digitalWrite(GreenPin,HIGH);
         else
           analogWrite(RedPin,100);
           //if(!dataFile)
+          if(usesdcard)
+          {
             dataFile = SD.open("pswlogr.txt", FILE_WRITE);
-          dataFile.print(message);
-          dataFile.flush();
-          dataFile.close();
+            dataFile.print(message);
+            dataFile.flush();
+            dataFile.close();
+          }
+          else
+            analogWrite(RedPin,50);
         //if( RedPinStatus++ == 255) RedPinStatus = 0;
         //analogWrite(RedPin,RedPinStatus);
         digitalWrite(GreenPin,LOW);
