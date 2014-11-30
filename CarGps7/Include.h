@@ -2,6 +2,15 @@
 #define _CarGPS7Include
 
 #define ARRAYSIZE 200
+#define INTERVAL  10000 
+
+class Gsm {
+  public:
+  static void init();
+  static void transmit(char *str);
+  static void realtransmit(char *str);
+  static char *sendATcommand(char *cmd,char *resp,long int t);
+};
 
 class Gps {
   public:

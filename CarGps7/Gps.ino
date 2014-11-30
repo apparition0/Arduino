@@ -17,7 +17,7 @@ void Gps::check()
   if(Serial1.available())
   {
     b = Serial1.read();
-    Serial.print(b);
+    //Serial.print(b);
     array[iarray] = b;
     iarray++;
   }
@@ -34,7 +34,7 @@ bool Gps::done()
 
 char *Gps::outstring()
 {
-  memcpy(array,outarray,ARRAYSIZE); // copy WHOLE string, to get trailing zeros
+  memcpy(outarray,array,ARRAYSIZE); // copy WHOLE string, to get trailing zeros
   memset(array,0,ARRAYSIZE);
   iarray=0;
   newline=false;
