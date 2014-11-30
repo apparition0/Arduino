@@ -4,9 +4,11 @@
 void setup()
 {
   Console::init(); // assumes serial 0, 9600
+  Console::print("init console done\n");
   Gsm::init();     // assumes serial 2, 9600
+  Console::print("init gsm done\n");
   Gps::init();     // assumes serial 1, 9600
-  Console::print("started\n");
+  Console::print("init gps done\n");
 }
 
 void loop()

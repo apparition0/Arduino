@@ -7,11 +7,12 @@ void Gsm::init()
 {
   long int to = 2000;
   mm = millis();
+  delay(2000);
   Serial2.begin(9600);
-  Console::print(sendATcommand("ATZ","OK",to));
-  Console::print(sendATcommand("AT+CGPSPWR=1","OK",to));
-  Console::print(sendATcommand("AT+CGPSOUT=51","OK",to));
-  Console::print(sendATcommand("AT+CGPSRST=1","OK",to)); 
+  Console::println(sendATcommand("ATZ","OK",to));
+  Console::println(sendATcommand("AT+CGPSPWR=1","OK",to));
+  Console::println(sendATcommand("AT+CGPSOUT=51","OK",to));
+  Console::println(sendATcommand("AT+CGPSRST=1","OK",to)); 
 }
 
 char *Gsm::sendATcommand(char *cmd,char *ans, long int timeout)
@@ -22,7 +23,6 @@ char *Gsm::sendATcommand(char *cmd,char *ans, long int timeout)
   memset(resp,0,ARRAYSIZE);
   while(Serial2.available()>0) Console::print(Serial2.read());
   Serial2.println(cmd);
-  Console::print("-");
   do 
   {
     //Console::print(".");
@@ -57,15 +57,22 @@ void Gsm::transmit(char *str)
 }
 void Gsm::realtransmit(char *str)
 {
+  char url[ARRAYSIZE];
+  for(int i=0;i<ARRAYSIZE;i++)
+    if( str[i]==10 || str[i] == 13)
+      str[i] = 0;
   Console::print("b");
-  Console::print(sendATcommand("AT+SAPBR=3,1,\"Contype\",\"GPRS\"" ,"OK", 5000));
-  Console::print(sendATcommand("AT+SAPBR=3,1,\"APN\",\"APN\""      ,"OK", 5000));
-  Console::print(sendATcommand("AT+SAPBR=1,1"                      ,"OK", 5000));
-  Console::print(sendATcommand("AT+HTTPINIT"                       ,"OK", 5000));
-  Console::print(sendATcommand("AT+HTTPPARA=\"CID\",1"             ,"OK", 5000));
-  Console::print(sendATcommand("AT+HTTPPARA=\"URL\",\"http://162.248.8.107/py/py2.py?cat&dogs\"","OK", 5000));
-  Console::print(sendATcommand("AT+HTTPACTION=0"                   ,"OK", 5000));
-  Console::print(sendATcommand("AT+HTTPREAD=0,100"                 ,"OK", 5000));
-  Console::print(sendATcommand("AT+HTTPTERM"                       ,"OK", 5000));
+  Console::println(sendATcommand("AT+SAPBR=3,1,\"Contype\",\"GPRS\"" ,"OK", 5000));
+  Console::println(sendATcommand("AT+SAPBR=3,1,\"APN\",\"APN\""      ,"OK", 5000));
+  Console::println(sendATcommand("AT+SAPBR=1,1"                      ,"OK", 5000));
+  Console::println(sendATcommand("AT+HTTPINIT"                       ,"OK", 5000));
+  Console::println(sendATcommand("AT+HTTPPARA=\"CID\",1"             ,"OK", 5000));
+  strcpy(url,"AT+HTTPPARA=\"URL\",\"http://162.248.8.107/py/py1.py?");
+  strcat(url,str);
+  strcat(url,"\"");
+  Console::println(sendATcommand(url,"OK", 5000));
+  Console::println(sendATcommand("AT+HTTPACTION=0"                   ,"OK", 5000));
+  Console::println(sendATcommand("AT+HTTPREAD=0,100"                 ,"OK", 5000));
+  Console::println(sendATcommand("AT+HTTPTERM"                       ,"OK", 5000));
 }
 

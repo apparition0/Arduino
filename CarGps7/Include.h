@@ -24,6 +24,7 @@ class Console {
   public:
   static void init();
   static void print(char *str);
+  static void println(char *str);
   static void print(char c);
 };
 
