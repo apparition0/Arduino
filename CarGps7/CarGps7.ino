@@ -1,6 +1,8 @@
 #include <stdio.h>
 
-int i;
+#define ARRAYSIZE 200
+int  iarray=0;
+char array[ARRAYSIZE];
 
 void setup()
 {
@@ -9,7 +11,7 @@ void setup()
   Serial.print("started\n");
   Serial.print("() from GSM to Console\n");
   Serial.print("[] from Console to GSM\n");
-  
+  memset(array,0,ARRAYSIZE);
 }
 
 void loop()
@@ -19,23 +21,24 @@ void loop()
   if(Serial1.available())
   {
     b = Serial1.read();
-      //Serial.print("(");
-      Serial.print(b);
-      //Serial.print(")");
-      i++;
+    //Serial.print(b);
+    array[iarray] = b;
+    iarray++;
   }
   if(Serial.available())
   {
     b = Serial.read();
-    //Serial.print("[");
     Serial1.print(b);
-    //Serial.print("]");
   }
   if(b==10)
   {
-    Serial.print(" i=");
-    Serial.print(i);
+    Serial.print(array);
+    Serial.print(" iarray size=");
+    Serial.print(iarray);
     Serial.print("\n");
-    i=0;
+    memset(array,0,ARRAYSIZE);
+    iarray=0;
   }
+  if(iarray>ARRAYSIZE)
+    iarray=0;
 }
