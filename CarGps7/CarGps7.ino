@@ -14,6 +14,7 @@ void setup()
 void loop()
 {
   char *mystring;
+  Console::allOff();
   Gps::check();
   if(Gps::done())
   {

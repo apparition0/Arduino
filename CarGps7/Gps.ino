@@ -34,9 +34,11 @@ bool Gps::done()
 
 char *Gps::outstring()
 {
+  Console::blueOn();
   memcpy(outarray,array,ARRAYSIZE); // copy WHOLE string, to get trailing zeros
   memset(array,0,ARRAYSIZE);
   iarray=0;
   newline=false;
+  delay(200);Console::blueOff();
   return outarray;
 }

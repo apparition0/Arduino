@@ -36,6 +36,10 @@ bool Gsm::sendATcommand(char *cmd,char *ans, long int timeout)
     }
   } while ( (!answer) && (millis() < (start+timeout) ) );
   Console::println(resp);
+  if(answer)
+    {Console::redOff();Console::greenOn();}
+  else
+    {Console::redOn();Console::greenOff();delay(200);}
   return answer;
 }
 
@@ -62,7 +66,7 @@ void Gsm::realtransmit(char *str)
   Console::print("b");
   sendATcommand("AT+SAPBR=3,1,\"Contype\",\"GPRS\"" ,"OK", 5000);
   sendATcommand("AT+SAPBR=3,1,\"APN\",\"APN\""      ,"OK", 5000);
-  sendATcommand("AT+SAPBR=1,1"                      ,"OK", 5000);
+  //sendATcommand("AT+SAPBR=1,1"                      ,"OK", 5000);
   sendATcommand("AT+HTTPINIT"                       ,"OK", 5000);
   sendATcommand("AT+HTTPPARA=\"CID\",1"             ,"OK", 5000);
   strcpy(url,"AT+HTTPPARA=\"URL\",\"http://162.248.8.107/py/py1.py?");

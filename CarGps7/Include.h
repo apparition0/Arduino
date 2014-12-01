@@ -2,7 +2,7 @@
 #define _CarGPS7Include
 
 #define ARRAYSIZE 200
-#define INTERVAL  10000 
+#define INTERVAL  20000 
 
 class Gsm {
   public:
@@ -29,12 +29,14 @@ class Console {
   static void print(char *str);
   static void println(char *str);
   static void print(char c);
-  void Console::redOn();
-  void Console::redOff();
-  void Console::greenOn();
-  void Console::greenOff();
-  void Console::blueOn();
-  void Console::blueOff();
+  static void redOn();
+  static void redOff();
+  static void greenOn();
+  static void greenOff();
+  static void blueOn();
+  static void blueOff();
+  static void allOn();
+  static void allOff();
 };
 
 #endif

@@ -25,4 +25,16 @@ void Console::greenOn() {digitalWrite(GREENPIN,HIGH);}
 void Console::greenOff() {digitalWrite(GREENPIN,LOW);}
 void Console::blueOn() {digitalWrite(BLUEPIN,HIGH);}
 void Console::blueOff() {digitalWrite(BLUEPIN,LOW);}
-
+void Console::allOn() 
+{
+  blueOn();
+  greenOn();
+  redOn();
+  
+}
+void Console::allOff()
+{
+  redOff();
+  greenOff();
+  blueOff();
+}
