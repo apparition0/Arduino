@@ -5,13 +5,13 @@ char resp[ARRAYSIZE];
 
 void Gsm::init()
 {
-  long int to = 2000;
+  long int to = 5000;
   mm = millis();
-  delay(2000);
+  delay(8000);  // if powered on at the same time, let gsm board setup
   Serial2.begin(9600);
   Console::println(sendATcommand("ATZ","OK",to));
   Console::println(sendATcommand("AT+CGPSPWR=1","OK",to));
-  Console::println(sendATcommand("AT+CGPSOUT=51","OK",to));
+  Console::println(sendATcommand("AT+CGPSOUT=3","OK",to)); // 51 is the common items
   Console::println(sendATcommand("AT+CGPSRST=1","OK",to)); 
 }
 
