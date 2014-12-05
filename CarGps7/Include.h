@@ -9,7 +9,9 @@ class Gsm {
   static void init();
   static void transmit(char *str);
   static void realtransmit(char *str);
+  private:
   static bool sendATcommand(char *cmd,char *resp,long int t);
+  static void readdata();
 };
 
 class Gps {

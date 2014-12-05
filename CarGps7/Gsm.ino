@@ -59,6 +59,7 @@ void Gsm::transmit(char *str)
 }
 void Gsm::realtransmit(char *str)
 {
+  bool r;
   char url[ARRAYSIZE];
   for(int i=0;i<ARRAYSIZE;i++)
     if( str[i]==10 || str[i] == 13)
@@ -69,12 +70,28 @@ void Gsm::realtransmit(char *str)
   sendATcommand("AT+SAPBR=1,1"                      ,"OK", 5000);
   sendATcommand("AT+HTTPINIT"                       ,"OK", 5000);
   sendATcommand("AT+HTTPPARA=\"CID\",1"             ,"OK", 5000);
-  strcpy(url,"AT+HTTPPARA=\"URL\",\"http://162.248.8.107/py/db.py?");
+  strcpy(url,"AT+HTTPPARA=\"URL\",\"http://162.248.8.107/cgi-bin/db.py?");
   strcat(url,str);
   strcat(url,"\"");
   sendATcommand(url                                 ,"OK", 5000);
+  r =
   sendATcommand("AT+HTTPACTION=0"                   ,"OK", 5000);
-  sendATcommand("AT+HTTPREAD=0,100"                 ,"OK", 5000);
+  if(r)readdata();
   sendATcommand("AT+HTTPTERM"                       ,"OK", 5000);
 }
 
+void Gsm::readdata()
+{
+  char aux_str[100];
+  int x=0;
+  sprintf(aux_str, "AT+HTTPREAD=%d,100", x);
+  sendATcommand(aux_str, "+HTTPREAD:", 10000);
+  
+  char data[ARRAYSIZE];
+  memset(data,0,ARRAYSIZE);
+  
+  while( Serial2.available() > 0) 
+    data[x] = Serial2.read();
+  Console::println(data);  
+  
+}
