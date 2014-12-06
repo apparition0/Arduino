@@ -26,9 +26,7 @@ void loop()
   {
     digitalWrite(13,HIGH);
     c = BTSerial.read();
-    Serial.write("[");
     Serial.write(c);
-    Serial.write("]");
     digitalWrite(13,LOW);
   }
 
@@ -36,10 +34,19 @@ void loop()
   if (Serial.available())
   {
     c = Serial.read();
-    BTSerial.write(c);
-    Serial.write("(");
-    Serial.write(c);
-    Serial.write(")");
+    if(c==94)
+    {
+      Serial.write("(EOL)\n");
+      c=13;
+      BTSerial.write(c);
+      c=10;
+      BTSerial.write(c);
+    }
+    else
+    {
+      BTSerial.write(c);
+      Serial.write(c);
+    }
   }
 }  
 
